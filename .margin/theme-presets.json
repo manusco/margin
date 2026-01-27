@@ -1,0 +1,28 @@
+{
+    "themes": {
+        "swiss": {
+            "name": "Swiss International",
+            "description": "Grid-based, Helvetica-ish, clean, red accents.",
+            "variables": {
+                "--font-sans": "\"Inter\", sans-serif",
+                "--color-brand-electric": "hsl(0, 100%, 50%)"
+            }
+        },
+        "tech-noir": {
+            "name": "Tech Noir",
+            "description": "Dark mode, neon purple/blue, glowing text.",
+            "variables": {
+                "--font-sans": "\"JetBrains Mono\", monospace",
+                "--color-brand-electric": "hsl(280, 100%, 50%)"
+            }
+        },
+        "luxury": {
+            "name": "Luxury Editorial",
+            "description": "Serif headers, cream background, gold accents.",
+            "variables": {
+                "--font-sans": "\"Playfair Display\", serif",
+                "--color-brand-electric": "hsl(45, 100%, 50%)"
+            }
+        }
+    }
+}

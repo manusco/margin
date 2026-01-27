@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MARGIN | The Codebase of Truth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Instrument+Searif:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@300;400&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        void: '#050505',
+                        glass: 'rgba(255, 255, 255, 0.03)',
+                        signal: '#FF3B30', // International Orange (High Signal)
+                        acid: '#CCFF00', // Acid Green (User Insight)
+                        static: '#8E8E93'
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        serif: ['Instrument Serif', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    backgroundImage: {
+                        'noise': "url('data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"noiseFilter\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.65\" numOctaves=\"3\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23noiseFilter)\" opacity=\"0.05\"/%3E%3C/svg%3E')",
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .presentation section.page {
+            width: 16in;
+            height: 9in;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid #1a1a1a;
+            page-break-after: always;
+        }
+
+        .text-vertical {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Topological Betrayal Utilities */
+        .betray-grid-x {
+            transform: translateX(12%);
+        }
+
+        .betray-grid-y {
+            transform: translateY(-20%);
+        }
+
+        .betray-rotate {
+            transform: rotate(-2deg);
+        }
+
+        /* Atmospheric Scanlines */
+        .scanlines {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        /* SCALE ENGINE v2.0 */
+
+        /* PRINT MODE (The Source of Truth) */
+        @media print {
+            .presentation section.page {
+                break-after: page;
+                border-bottom: none;
+                display: block !important;
+            }
+
+            body {
+                background: #050505;
+                -webkit-print-color-adjust: exact;
+                overflow: visible !important;
+            }
+
+            #controls,
+            #pdf-fab,
+            #deck-viewport-wrapper {
+                display: none !important;
+            }
+
+            /* Reset to flow layout */
+            #deck-viewport {
+                display: block;
+                position: static;
+                width: auto;
+                height: auto;
+                transform: none;
+            }
+
+            #slide-container {
+                transform: none !important;
+                width: 100% !important;
+                height: auto !important;
+            }
+        }
+
+        /* SCREEN MODE */
+        @media screen {
+            body {
+                background: #050505;
+                margin: 0;
+            }
+
+            /* Shared FAB styles */
+            #pdf-fab {
+                position: fixed;
+                top: 2rem;
+                right: 2rem;
+                z-index: 100;
+            }
+
+            /* LANDSCAPE (Deck Mode) */
+            @media (orientation: landscape) {
+                body {
+                    overflow: hidden;
+                }
+
+                #deck-viewport {
+                    position: fixed;
+                    inset: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10;
+                }
+
+                #slide-container {
+                    /* Fixed 16:9 Aspect Ratio Source */
+                    width: 16in;
+                    /* 1536px */
+                    height: 9in;
+                    /* 864px */
+                    position: relative;
+                    transform-origin: center center;
+                    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+                }
+
+                .presentation section.page {
+                    position: absolute;
+                    inset: 0;
+                    opacity: 0;
+                    pointer-events: none;
+                    transition: opacity 0.4s ease;
+                }
+
+                .presentation section.page.active {
+                    opacity: 1;
+                    pointer-events: auto;
+                    z-index: 20;
+                }
+
+                #controls {
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                }
+
+                #controls:hover {
+                    opacity: 1;
+                }
+            }
+
+            /* PORTRAIT (Scroll Mode) */
+            @media (orientation: portrait) {
+                body {
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    padding: 20px 0;
+                }
+
+                #controls {
+                    display: none;
+                }
+
+                /* No arrows needed for scroll */
+
+                #deck-viewport {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 20px;
+                    width: 100%;
+                }
+
+                #slide-container {
+                    display: contents;
+                    /* Ungroup for stack */
+                }
+
+                .presentation section.page {
+                    position: relative;
+                    width: 16in;
+                    height: 9in;
+                    opacity: 1 !important;
+                    /* Always visible */
+                    pointer-events: auto;
+                    transform-origin: top center;
+                    margin-bottom: 2rem;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+                }
+
+                /* Helper class applied by JS to scale individual pages in portrait */
+                .portrait-scaled {
+                    /* Scale calculated in JS */
+                }
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-void text-slate-300 font-sans antialiased selection:bg-signal selection:text-white">
+
+    <!-- Atmospheric Layer -->
+    <div class="fixed inset-0 bg-noise pointer-events-none z-50 opacity-40 mix-blend-overlay"></div>
+    <div class="fixed inset-0 scanlines pointer-events-none z-40 opacity-20"></div>
+
+    <!-- PDF Download FAB -->
+    <a id="pdf-fab" href="/margin-pitch.pdf" download
+        class="group flex items-center gap-3 pl-3 pr-2 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 hover:border-signal/50 hover:bg-void transition-all duration-500 w-10 hover:w-40 overflow-hidden print:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="text-static group-hover:text-signal transition-colors shrink-0">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" x2="12" y1="15" y2="3" />
+        </svg>
+        <span
+            class="text-[10px] font-mono uppercase tracking-widest text-slate-400 opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity duration-300 transform translate-x-4 group-hover:translate-x-0">
+            Export PDF
+        </span>
+    </a>
+
+    <!-- Navigation Controls (Landscape Only) -->
+    <nav id="controls" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex gap-4 print:hidden">
+        <button onclick="prevSlide()"
+            class="p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-acid transition-all text-white">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <span id="slide-counter"
+            class="px-4 py-3 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-static flex items-center">
+            01 / 05
+        </span>
+        <button onclick="nextSlide()"
+            class="p-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-acid transition-all text-white">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+    </nav>
+
+    <div id="deck-viewport">
+        <div id="slide-container" class="document presentation">
+
+            <!-- SLIDE 1: THE PREMONITION (Topological Betrayal layout) -->
+            <section class="page bg-void flex items-center justify-center relative">
+                <!-- Background Typography -->
+                <div
+                    class="absolute inset-0 overflow-hidden opacity-10 select-none pointer-events-none flex items-center justify-center">
+                    <span
+                        class="text-[40rem] font-bold text-white tracking-tighter leading-none whitespace-nowrap blur-sm">SLOP</span>
+                </div>
+
+                <div class="relative z-10 grid grid-cols-12 w-full max-w-[90%] items-center">
+                    <!-- Large Serif Headline -->
+                    <div class="col-span-8 space-y-2 mix-blend-difference">
+                        <div class="flex items-center gap-4 mb-8">
+                            <span class="h-px w-20 bg-signal"></span>
+                            <span class="text-xs font-mono text-signal uppercase tracking-[0.4em]">The_Problem</span>
+                        </div>
+                        <h1 class="text-9xl font-serif text-white tracking-tight leading-[0.85]">
+                            Don't make <br>
+                            <span class="italic text-slate-500 font-serif">me think.</span>
+                        </h1>
+                    </div>
+
+                    <!-- Floating Card (Betraying the grid) -->
+                    <div
+                        class="col-span-4 betray-grid-y betray-rotate glass-panel p-8 rounded-none border-l-4 border-signal shadow-2xl shadow-signal/10 w-[120%] -ml-20">
+                        <p class="text-2xl font-light leading-relaxed text-white">
+                            <span class="text-signal font-bold">Stop building decks twice.</span><br>
+                            Web for the viral link. PDF for the board meeting. <br>
+                            One codebase. Zero double work.
+                        </p>
+                        <div class="mt-8 flex justify-between items-end">
+                            <span class="text-xs font-mono text-static uppercase">Status: CRITICAL</span>
+                            <span class="animate-pulse w-2 h-2 bg-signal rounded-full"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute bottom-12 right-12 text-right">
+                    <p class="text-[10px] font-mono text-static uppercase tracking-widest">Margin Framework v1.0</p>
+                </div>
+            </section>
+
+            <!-- SLIDE 2: THE DATA (Margin Chart Visualization) -->
+            <section class="page bg-void relative">
+                <div
+                    class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-neutral-900 to-transparent opacity-50">
+                </div>
+
+                <div class="grid grid-cols-12 h-full">
+                    <!-- Left: Narrative -->
+                    <div
+                        class="col-span-4 p-20 flex flex-col justify-center border-r border-white/5 relative z-10 glass-panel">
+                        <span class="text-6xl mb-4 grayscale">🌊</span>
+                        <h2 class="text-4xl font-bold text-white mb-6">Templates are Invisible.</h2>
+                        <p class="text-sm text-static leading-relaxed font-mono">
+                            Investors see 50 "Canva Decks" a week. They all blur together. <br><br>
+                            To raise capital in 2026, you need to signal <strong>craftsmanship</strong>.
+                            If it looks like a template, they treat you like a commodity.
+                        </p>
+                        <div class="mt-12">
+                            <div class="text-6xl font-serif text-acid italic">20%</div>
+                            <div class="text-xs font-bold uppercase tracking-widest text-slate-500 mt-2">of Youtube is
+                                generic AI</div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Chart Visualization -->
+                    <div class="col-span-8 p-20 flex flex-col justify-center items-center relative">
+                        <!-- Custom SVG Chart: The Signal vs Noise -->
+                        <div class="w-full max-w-3xl relative">
+                            <h3 class="absolute -top-12 left-0 text-xs font-mono text-acid tracking-widest">
+                                SIGNAL_TO_NOISE_RATIO</h3>
+                            <svg viewBox="0 0 800 400" class="w-full overflow-visible">
+                                <!-- Definitions for glows -->
+                                <defs>
+                                    <linearGradient id="signalGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#FF3B30" stop-opacity="0.5" />
+                                        <stop offset="100%" stop-color="#FF3B30" stop-opacity="0" />
+                                    </linearGradient>
+                                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                                        <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+                                        <feMerge>
+                                            <feMergeNode in="coloredBlur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+
+                                <!-- The Slop Curve (Noise) -->
+                                <path d="M0,350 C100,340 200,360 300,300 S500,100 800,50" fill="none" stroke="#333"
+                                    stroke-width="2" stroke-dasharray="4 4" />
+                                <text x="750" y="40" font-family="JetBrains Mono" font-size="12"
+                                    fill="#555">NOISE</text>
+
+                                <!-- The Margin Curve (Signal) -->
+                                <path d="M0,380 C150,380 300,380 400,200 S600,380 800,380"
+                                    fill="url(#signalGradient)" />
+                                <path d="M0,380 C150,380 300,380 400,200 S600,380 800,380" fill="none" stroke="#FF3B30"
+                                    stroke-width="4" filter="url(#glow)" />
+
+                                <!-- Annotation -->
+                                <circle cx="400" cy="200" r="6" fill="#CCFF00" />
+                                <line x1="400" y1="200" x2="400" y2="100" stroke="#CCFF00" stroke-width="1" />
+                                <rect x="350" y="60" width="100" height="30" fill="#CCFF00" />
+                                <text x="400" y="80" text-anchor="middle" font-family="Space Grotesk" font-weight="bold"
+                                    font-size="14" fill="#000">THE CONTRARIAN TRUTH</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 3: THE MECHANISM (Glassmorphism layout) -->
+            <section class="page bg-void flex flex-col items-center justify-center p-20 relative">
+                <div
+                    class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-void to-void">
+                </div>
+
+                <div class="relative z-10 text-center mb-16">
+                    <h2 class="text-sm font-mono text-static uppercase tracking-[0.5em] mb-4">Architecture</h2>
+                    <h1 class="text-7xl font-serif text-white">The Publishing Engine.</h1>
+                </div>
+
+                <div class="grid grid-cols-3 gap-8 w-full max-w-6xl relative z-10">
+                    <!-- Card 1 -->
+                    <div class="glass-panel p-10 hover:border-acid transition-colors duration-500 group">
+                        <div class="text-xs font-mono text-static mb-4">01 // WRITE</div>
+                        <div class="text-4xl mb-6 group-hover:scale-110 transition-transform duration-500">📝</div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Markdown First</h3>
+                        <p class="text-sm text-gray-400">Focus on the story, not the pixels. <br> Version control your
+                            narrative with Git.</p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div
+                        class="glass-panel p-10 hover:border-acid transition-colors duration-500 group -mt-12 bg-white/5">
+                        <div class="text-xs font-mono text-acid mb-4">02 // COMPILE</div>
+                        <div class="text-4xl mb-6 group-hover:scale-110 transition-transform duration-500">⚡</div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Vite Engine</h3>
+                        <p class="text-sm text-gray-400">Instant hot-reload. <br> Tailwind CSS styling. Interactive
+                            Charts.</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="glass-panel p-10 hover:border-acid transition-colors duration-500 group">
+                        <div class="text-xs font-mono text-static mb-4">03 // SHIP</div>
+                        <div class="text-4xl mb-6 group-hover:scale-110 transition-transform duration-500">�</div>
+                        <h3 class="text-2xl font-bold text-white mb-2">One Click</h3>
+                        <p class="text-sm text-gray-400">`npm run ship` <br> Deploys the Web App AND generates the PDF.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SLIDE 4: THE GIFT (Minimalist High-Contrast) -->
+            <section class="page bg-signal text-void flex items-center justify-center relative overflow-hidden">
+                <!-- Big decoration -->
+                <div class="absolute -right-20 -bottom-40 text-[30rem] font-serif italic opacity-10 leading-none">M
+                </div>
+
+                <div class="w-full max-w-4xl z-10">
+                    <div class="border-l-4 border-void pl-12">
+                        <h2 class="text-8xl font-black font-sans tracking-tight mb-8">
+                            Stop dragging <br> rectangles.
+                        </h2>
+                        <p class="text-3xl font-serif italic opacity-80 mb-12">
+                            Start compiling narratives.
+                        </p>
+
+                        <div
+                            class="inline-flex items-center gap-6 bg-void text-white px-8 py-4 rounded-full font-mono text-sm hover:scale-105 transition-transform cursor-pointer">
+                            <span class="text-acid">❯</span> npm install margin
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div> <!-- End Viewport -->
+
+    <script>
+        // --- DECK ENGINE v1.0 ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.page');
+        const counter = document.getElementById('slide-counter');
+        const container = document.getElementById('slide-container');
+
+        // Initialize
+        function init() {
+            updateSlide(0);
+            fitToScreen();
+            window.addEventListener('resize', fitToScreen);
+            window.addEventListener('keydown', handleKey);
+        }
+
+        // Scaling Logic
+        function fitToScreen() {
+            // Standard Dimensions: 16in x 9in (approx 1536px x 864px @ 96dpi)
+            const baseW = 1536;
+            const baseH = 864;
+
+            const scaleX = window.innerWidth / baseW;
+            const scaleY = window.innerHeight / baseH;
+
+            // Use the smaller scale to fit entirely, with some padding (0.9)
+            const scale = Math.min(scaleX, scaleY) * 0.95;
+
+            container.style.transform = `scale(${scale})`;
+        }
+
+        // Navigation
+        function updateSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= slides.length) index = slides.length - 1;
+
+            currentSlide = index;
+
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === currentSlide);
+            });
+
+            // Update Counter
+            counter.innerText = `0${currentSlide + 1} / 0${slides.length}`;
+        }
+
+        function nextSlide() { updateSlide(currentSlide + 1); }
+        function prevSlide() { updateSlide(currentSlide - 1); }
+
+        function handleKey(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        }
+
+        // Start
+        init();
+    </script>
+    </div>
+</body>
+
+</html>

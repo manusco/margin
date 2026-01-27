@@ -1,0 +1,45 @@
+{
+  "type": "module",
+  "name": "margin-lead-magnet-framework",
+  "version": "0.1.0",
+  "description": "Margin - The Lead Magnet Framework. A static-first engine for high-conversion documents.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manusco/margin.git"
+  },
+  "keywords": [
+    "margin",
+    "lead-magnet",
+    "pdf-generation",
+    "framework",
+    "static-site"
+  ],
+  "author": "Manusco",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "export-pdf": "vite build && node framework/pdf-engine.js dist/projects/ebook-01/index.html dist/ebook-01.pdf",
+    "export-deck": "vite build && node framework/pdf-engine.js dist/projects/deck-01/index.html dist/deck-01.pdf presentation",
+    "pdf:pitch": "vite build && node framework/pdf-engine.js dist/projects/margin-pitch/index.html dist/margin-pitch.pdf presentation",
+    "postinstall": "playwright install chromium"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "private": true,
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "@tailwindcss/postcss": "^4.1.18",
+    "autoprefixer": "^10.4.23",
+    "lucide-static": "^0.563.0",
+    "playwright": "^1.58.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "pagedjs": "^0.4.3"
+  }
+}

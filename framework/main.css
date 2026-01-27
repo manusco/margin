@@ -1,0 +1,266 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-void: hsl(222, 47%, 11%);
+  --color-brand-electric: hsl(217, 91%, 60%);
+  --color-brand-solar: hsl(187, 92%, 69%);
+  --color-brand-neon: hsl(280, 87%, 65%);
+  --color-brand-paper: hsl(30, 20%, 96%);
+  --color-brand-swiss-red: hsl(355, 75%, 55%);
+  --color-brand-lux-gold: hsl(45, 60%, 55%);
+  --color-brand-lux-black: hsl(0, 0%, 5%);
+
+  --font-sans: "Outfit", "Inter", sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --spacing-doc-edge: 20mm;
+  --spacing-safe-zone: 10mm;
+
+  --shadow-margin: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
+  --shadow-margin-hover: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-reveal: reveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  --animate-grain: grain 8s steps(10) infinite;
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes reveal {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes grain {
+
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+
+    10% {
+      transform: translate(-5%, -10%);
+    }
+
+    20% {
+      transform: translate(-15%, 5%);
+    }
+
+    30% {
+      transform: translate(7%, -25%);
+    }
+
+    40% {
+      transform: translate(-5%, 25%);
+    }
+
+    50% {
+      transform: translate(-15%, 10%);
+    }
+
+    60% {
+      transform: translate(15%, 0%);
+    }
+
+    70% {
+      transform: translate(0%, 15%);
+    }
+
+    80% {
+      transform: translate(3%, 35%);
+    }
+
+    90% {
+      transform: translate(-10%, 10%);
+    }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-brand-void text-slate-200 antialiased transition-colors duration-500;
+  }
+
+  /* THEME: SWISS (Clean, Red/Black/White) */
+  .theme-swiss {
+    @apply bg-white text-black font-sans;
+    --color-brand-electric: var(--color-brand-swiss-red);
+    --color-brand-void: #ffffff;
+    --color-brand-solar: #000000;
+    /* Override any dark-mode defaults if needed */
+  }
+
+  /* THEME: LUXURY (Serif, Gold/Black) */
+  .theme-luxury {
+    @apply bg-brand-lux-black text-brand-paper;
+    --color-brand-electric: var(--color-brand-lux-gold);
+    --font-sans: var(--font-serif);
+    /* Force Serif everywhere */
+  }
+
+  /* THEME: PAPER (Warm, Academic) */
+  .theme-paper {
+    @apply bg-brand-paper text-slate-800;
+    --color-brand-void: var(--color-brand-paper);
+  }
+}
+
+@layer components {
+
+  /* The Paper Canvas */
+  .document {
+    @apply bg-white;
+  }
+
+  .theme-swiss .document {
+    @apply bg-white;
+  }
+
+  .theme-luxury .document {
+    @apply bg-brand-lux-black border border-white/10;
+  }
+
+  .page {
+    @apply relative bg-white overflow-hidden;
+    width: 210mm;
+    height: 297mm;
+    flex-shrink: 0;
+  }
+
+  .theme-luxury .page {
+    @apply bg-brand-lux-black text-brand-paper;
+  }
+
+  .a4-landscape {
+    width: 297mm;
+    height: 210mm;
+  }
+
+  /* Presentation Mode (16:9) */
+  .presentation {
+    width: 16in;
+    /* 406.4mm */
+    height: 9in;
+    /* 228.6mm */
+  }
+
+  /* Atmospheric Utilities */
+  .bg-noise {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  .glass-panel {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl;
+  }
+
+  .mesh-gradient {
+    background-image: radial-gradient(at 0% 0%, hsla(217, 91%, 60%, 0.4) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(187, 92%, 69%, 0.4) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(280, 87%, 65%, 0.4) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(222, 47%, 11%, 0.4) 0px, transparent 50%);
+  }
+
+  /* Margin Charts (Legacy / Simple) */
+  .margin-chart-bar {
+    @apply h-8 bg-slate-100 rounded-full overflow-hidden relative border border-slate-200;
+  }
+
+  .margin-chart-fill {
+    @apply h-full bg-brand-electric rounded-full transition-all duration-1000 ease-out;
+  }
+
+  /* Visual Guardrails with "Topological Betrayal" */
+  .safety-zone {
+    @apply absolute pointer-events-none z-[1000];
+    top: var(--spacing-safe-zone);
+    left: var(--spacing-safe-zone);
+    right: var(--spacing-safe-zone);
+    bottom: var(--spacing-safe-zone);
+    border: 1px dashed hsla(217, 91%, 60%, 0.3);
+  }
+
+  .safety-zone::before {
+    content: 'MARGIN_SAFE_ZONE';
+    @apply absolute -top-3 left-4 px-2 bg-white text-[8px] font-mono font-bold tracking-widest text-brand-electric/50;
+  }
+}
+
+/* Paged.js Rendering Rules */
+@media screen {
+  body {
+    @apply py-20 flex flex-col items-center;
+  }
+
+  .document {
+    @apply flex flex-col items-center gap-16;
+  }
+
+  .pagedjs_pages {
+    @apply flex flex-col items-center gap-16;
+  }
+
+  .pagedjs_page {
+    @apply !shadow-margin;
+    margin-bottom: 0 !important;
+  }
+
+  /* On screen, slide transitions look nice */
+  .page {
+    @apply transition-transform duration-500;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  @page :first {
+    margin-top: 0;
+  }
+
+  .safety-zone,
+  .margin-ui-overlay {
+    @apply !hidden;
+  }
+
+  .page {
+    @apply !m-0 !shadow-none;
+    page-break-after: always;
+  }
+
+  /* Reset animations for print */
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* High-Res print adjustments */
+  .bg-noise {
+    opacity: 0.02;
+    /* Reduce noise density for print to save ink/CPU */
+  }
+}

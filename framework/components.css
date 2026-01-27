@@ -1,0 +1,19 @@
+/* Standardized Lead Magnet Components */
+
+.content {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    padding: 10mm;
+}
+
+/* Page Numbers */
+.page-number::after {
+    content: counter(page);
+}
+
+/* Section-based breaks */
+section.page {
+    display: block;
+    position: relative;
+}
