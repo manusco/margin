@@ -21,3 +21,4 @@ build/
 
 # Website (separate repository)
 website/
+.antigravity-images
